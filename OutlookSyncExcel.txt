@@ -1,0 +1,130 @@
+'Private Sub Add_Schedule()
+'Application.OnTime Now + TimeValue("17:52:01"), "Download"
+'End Sub
+Sub Download()
+    'Add Tools->References->"Microsoft Outlook nn.n Object Library"
+    'nn.n varies as per our Outlook Installation
+    Dim Folder As Outlook.MAPIFolder
+    Dim sFolders As Outlook.MAPIFolder
+    Dim iRow As Integer, oRow As Integer
+    Dim MailBoxName As String, Pst_Folder_Name  As String
+   
+    'Mailbox or PST Main Folder Name (As how it is displayed in your Outlook Session)
+    MailBoxName = "MTorrejon@teamwash.com"
+ 
+    'Mailbox Folder or PST Folder Name (As how it is displayed in your Outlook Session)
+    Pst_Folder_Name = "Inbox" 'Sample "Inbox" or "Sent Items"
+ 
+    'To directly a Folder at a high level THIS!
+    'Set Folder = Outlook.Session.Folders(MailBoxName).Folders(Pst_Folder_Name)
+    
+    'To access a main folder or a subfolder (level-1)
+    For Each Folder In Outlook.Session.Folders(MailBoxName).Folders
+        If VBA.UCase(Folder.Name) = VBA.UCase(Pst_Folder_Name) Then GoTo Label_Folder_Found
+        For Each sFolders In Folder.Folders
+            If VBA.UCase(sFolders.Name) = VBA.UCase(Pst_Folder_Name) Then
+                Set Folder = sFolders
+                GoTo Label_Folder_Found
+            End If
+        Next sFolders
+    Next Folder
+ 
+Label_Folder_Found:
+     If Folder.Name = "" Then
+        MsgBox "Invalid Data in Input"
+        GoTo End_Lbl1:
+    End If
+    
+    
+    Set fs = CreateObject("Scripting.FileSystemObject")
+    Set a = fs.CreateTextFile("\\tw-pdc\documents$\mtorrejon\my documents\testfile.xls", True)
+    
+    MsgBox (Folder.Items.Count)
+    
+   MsgBox (VBA.DateValue(VBA.Now))
+    oRow = 1
+    
+      rCount = 1
+      
+      
+       Set xlAppl = CreateObject("Excel.Application")
+xlAppl.Application.Visible = True
+xlAppl.DisplayAlerts = False
+'Set wb = Workbooks.Open("c:\bogrammering\temp\aha.xls", notify:=False)
+Set xlWB = xlAppl.Workbooks.Open("\\tw-pdc\documents$\mtorrejon\my documents\testfile.xls", notify:=False)
+
+
+Set xlSheet = xlWB.Sheets(1)
+
+xlSheet.Cells(1, 1) = "Nombre"
+xlSheet.Cells(1, 2) = "Ocupacion"
+xlSheet.Cells(1, 3) = "Numero de tienda"
+xlSheet.Cells(1, 4) = "Contacto"
+xlSheet.Cells(1, 5) = "Fecha"
+xlSheet.Cells(1, 6) = "Paga"
+    'MsgBox (Folder.Items)
+  For iRow = 1 To Folder.Items.Count
+    MsgBox ("a")
+  If VBA.DateValue(Folder.Items.item(iRow).ReceivedTime) = "11/15/2015" _
+  And Folder.Items.item(iRow).SenderEmailAddress = "mptorrejon@gmail.com" Then
+ oRow = oRow + 1
+
+ sText = Folder.Items.item(iRow).Body
+ 'MsgBox (sText)
+    vText = Split(sText, Chr(13))
+    'Find the next empty line of the worksheet
+  
+     rCount = rCount + 1
+    'Check each line of text in the message body
+    
+    
+    
+       'Check each line of text in the message body
+    For i = UBound(vText) To 0 Step -1
+        'MsgBox (vText)
+      If InStr(1, vText(i), "Nombre:") > 0 Then
+            vItem = Split(vText(i), Chr(58))
+            xlSheet.Range("A" & rCount) = Trim(vItem(1))
+        End If
+
+        If InStr(1, vText(i), "Ocupacion:") > 0 Then
+            vItem = Split(vText(i), Chr(58))
+            xlSheet.Range("B" & rCount) = Trim(vItem(1))
+        End If
+
+        If InStr(1, vText(i), "Numero de tienda:") > 0 Then
+            vItem = Split(vText(i), Chr(58))
+            xlSheet.Range("C" & rCount) = Trim(vItem(1))
+        End If
+
+        If InStr(1, vText(i), "Contacto:") > 0 Then
+            vItem = Split(vText(i), Chr(58))
+            xlSheet.Range("D" & rCount) = Trim(vItem(1))
+        End If
+
+        If InStr(1, vText(i), "Fecha:") > 0 Then
+            vItem = Split(vText(i), Chr(58))
+            xlSheet.Range("E" & rCount) = Trim(vItem(1))
+        End If
+
+        If InStr(1, vText(i), "Paga:") > 0 Then
+            vItem = Split(vText(i), Chr(58))
+            xlSheet.Range("F" & rCount) = Trim(vItem(1))
+        End If
+
+Next
+   End If
+
+   Next iRow
+ 
+End_Lbl1:
+
+a.Close
+
+
+
+End Sub
+ 
+
+
+
