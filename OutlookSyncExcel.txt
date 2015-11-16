@@ -39,9 +39,9 @@ Label_Folder_Found:
     Set fs = CreateObject("Scripting.FileSystemObject")
     Set a = fs.CreateTextFile("\\tw-pdc\documents$\mtorrejon\my documents\testfile.xls", True)
     
-    MsgBox (Folder.Items.Count)
+    'MsgBox (Folder.Items.Count)
     
-   MsgBox (VBA.DateValue(VBA.Now))
+   'MsgBox (VBA.DateValue(VBA.Now))
     oRow = 1
     
       rCount = 1
@@ -50,21 +50,20 @@ Label_Folder_Found:
        Set xlAppl = CreateObject("Excel.Application")
 xlAppl.Application.Visible = True
 xlAppl.DisplayAlerts = False
-'Set wb = Workbooks.Open("c:\bogrammering\temp\aha.xls", notify:=False)
 Set xlWB = xlAppl.Workbooks.Open("\\tw-pdc\documents$\mtorrejon\my documents\testfile.xls", notify:=False)
 
 
 Set xlSheet = xlWB.Sheets(1)
 
-xlSheet.Cells(1, 1) = "Nombre"
-xlSheet.Cells(1, 2) = "Ocupacion"
-xlSheet.Cells(1, 3) = "Numero de tienda"
-xlSheet.Cells(1, 4) = "Contacto"
-xlSheet.Cells(1, 5) = "Fecha"
-xlSheet.Cells(1, 6) = "Paga"
+xlSheet.Cells(1, 1) = "Name"
+xlSheet.Cells(1, 2) = "Position"
+xlSheet.Cells(1, 3) = "Store No"
+xlSheet.Cells(1, 4) = "Reference"
+xlSheet.Cells(1, 5) = "Date"
+xlSheet.Cells(1, 6) = "Salary"
     'MsgBox (Folder.Items)
   For iRow = 1 To Folder.Items.Count
-    MsgBox ("a")
+    'MsgBox ("a")
   If VBA.DateValue(Folder.Items.item(iRow).ReceivedTime) = "11/15/2015" _
   And Folder.Items.item(iRow).SenderEmailAddress = "mptorrejon@gmail.com" Then
  oRow = oRow + 1
